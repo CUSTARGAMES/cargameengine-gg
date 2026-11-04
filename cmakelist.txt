@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.20)
+project(NFSMini)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.3.8)
+FetchContent_Declare(glad GIT_REPOSITORY https://github.com/Dav1dde/glad.git GIT_TAG v0.1.36)
+FetchContent_Declare(assimp GIT_REPOSITORY https://github.com/assimp/assimp.git GIT_TAG v5.3.1)
+FetchContent_Declare(bullet3 GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git GIT_TAG 3.25)
+FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm.git GIT_TAG 0.9.9.8)
+
+FetchContent_MakeAvailable(glfw glad assimp bullet3 glm)
+
+# Glad needs to be built as a library from its cmake generator (skip — we use generated glad manually)
+# Simpler: we vendor glad files in src/ (see note below).
+
+add_executable(game
+    src/main.cpp
+    src/Car.cpp
+    src/glad.c
+)
+
+target_include_directories(game PRIVATE src ${glm_SOURCE_DIR})
+target_link_libraries(game PRIVATE
+    glfw
+    assimp
+    BulletDynamics BulletCollision LinearMath
+    ${CMAKE_DL_LIBS}
+)
